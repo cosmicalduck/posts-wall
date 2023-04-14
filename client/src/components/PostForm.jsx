@@ -55,7 +55,7 @@ function PostForm(){
             <textarea className="form-control mr-2" name='description' placeholder='Escriba aquí la descripción del post' onChange={handleChange}/>
           </Col>
           <Col>
-            <Button type="button" className="btn btn-light">Crear post</Button>
+            <Button type="submit" className="btn btn-light">Crear post</Button>
           </Col>
         </Row>
       </form>
