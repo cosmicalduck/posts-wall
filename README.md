@@ -1,6 +1,6 @@
 # Muro de posts
 
-## Servidor
+## Server
 Para iniciar el servidor, primero deben de instalarse sus dependencias usando:  
 `npm install`  
 
@@ -10,7 +10,7 @@ Después, de esto crear el directorio build con:
 Y finalmente iniciarlo con:   
 `npm start`
 
-## Cliente
+## Client
 Una vez realizado esto, installar las dependencias del cliente con  
 `npm install` 
  
