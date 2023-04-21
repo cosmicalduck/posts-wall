@@ -9,7 +9,7 @@ export const apiSlice = createApi({
     getPosts: builder.query({
       query: () => '/posts',
       providesTags: ['Posts'],
-      transformResponse: response => response.sort((a,b) => b.id - a.id),
+      transformResponse: response => response.sort((a, b) => b.id - a.id),
     }),
     createPost: builder.mutation({
       query: (newPost) => ({
@@ -17,7 +17,7 @@ export const apiSlice = createApi({
         method: 'POST',
         body: newPost,
       }),
-      // invalidatesTags:['Posts'],
+      invalidatesTags: ['Posts'],
     }),
     deletePost: builder.mutation({
       query: (id) => ({
