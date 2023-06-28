@@ -7,58 +7,69 @@ import { useCreatePostMutation } from "../features/api/apiSlice";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
-function PostForm(){
+function PostForm() {
 
-  const[post, setPost] = useState({
+  const [post, setPost] = useState({
     name: '',
     description: ''
   });
 
+  const [validated, setValidated] = useState(false);
+
   const [createPost] = useCreatePostMutation();
-  
+
   const dispatch = useDispatch();
-  
 
-  const handleChange = (e) => {
-    setPost({
-      ...post,
-      [e.target.name]: e.target.value
-    });
-  };
 
-  const handleSubmit = (e) => { 
+  const handleSubmit = (e) => {
     e.preventDefault();
     const name = e.target.elements.name.value.trim();
-    const description = e.target.elements.description.value.trim(); 
-    
-    dispatch(addPost({
-      ...post,
-      })
-    );
+    const description = e.target.elements.description.value.trim();
 
-    createPost({ 
-      name,
-      description
-    });
+    const form = e.currentTarget;
+
+    if (form.checkValidity() === false) {
+      e.stopPropagation();
+      alert('Por favor rellene todos los campos para poder crear un post.');
+    } else {
+      dispatch(addPost({
+        ...post,
+      })
+      );
+
+      createPost({
+        name,
+        description
+      });
+    }
+
+    setValidated(true);
 
   };
 
-  return(
+  return (
     <div className='d-flex justify-content-center m-5'>
-      <form className="post-form" onSubmit={handleSubmit}>
+      <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Row>
+          <Form.Group as={Col}>
+            <Form.Control required name='name' type='text' placeholder='Nombre del post' onChange={handleChange} />
+            <Form.Control.Feedback type="invalid">
+              Por favor ingrese un nombre.
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group as={Col}>
+            <Form.Control required as="textarea" className="form-control mr-2" name='description' placeholder='Escriba aquí la descripción del post' onChange={handleChange} />
+            <Form.Control.Feedback type="invalid">
+              Por favor ingrese una descripción.
+            </Form.Control.Feedback>
+          </Form.Group>
           <Col>
-            <input className="form-control" name='name' type='text' placeholder='Nombre del post' onChange={handleChange}/>
-          </Col>
-          <Col>
-            <textarea className="form-control mr-2" name='description' placeholder='Escriba aquí la descripción del post' onChange={handleChange}/>
-          </Col>
-          <Col>
-            <Button type="button" className="btn btn-light">Crear post</Button>
+            <Button type="submit" className="btn btn-light">Crear post</Button>
           </Col>
         </Row>
-      </form>
+      </Form>
     </div>
   )
 

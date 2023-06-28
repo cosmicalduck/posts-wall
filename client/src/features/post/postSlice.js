@@ -1,7 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const postsUrl = '//localhost:3001/posts';
+import { createSlice } from "@reduxjs/toolkit";
+import { apiSlice } from "../api/apiSlice";
 
 const initialState = {
   entities: [],
@@ -11,11 +9,11 @@ const initialState = {
 }
 
 export const fetchPosts = createAsyncThunk('post/fetchPosts', async () => {
-  try{
+  try {
     const response = await axios.get(postsUrl);
     return [...response.data];
 
-  } catch(err){
+  } catch (err) {
     return err.message;
   }
 });
@@ -23,46 +21,39 @@ export const fetchPosts = createAsyncThunk('post/fetchPosts', async () => {
 export const postSlice = createSlice({
   name: 'post',
   initialState,
-  reducers:{
+  reducers: {
     addPost: (state, action) => {
       state.entities.push(action.payload);
       state.filteredEntities = state.entities
     },
     removePost: (state, action) => {
       const postFound = state.entities.find(post => post.id === action.payload);
-      if(postFound){
+      if (postFound) {
         state.entities.splice(state.entities.indexOf(postFound), 1);
-        state.filteredEntities = state.entities;        
+        state.filteredEntities = state.entities;
       }
     },
     filterPosts: (state, action) => {
-      if(action.payload === '' || null) {
+      if (action.payload === '' || null) {
         state.filteredEntities = state.entities;
 
-      } else {        
+      } else {
         state.filteredEntities = [...state.entities].filter((post) => post.name.toLowerCase().includes(action.payload.toLowerCase()))
-       }      
+      }
     }
   },
-  extraReducers (builder) {
+  extraReducers(builder) {
     builder
-    .addCase(fetchPosts.pending, (state,action) =>{
-      state.status = 'loading';
-    })
-    .addCase(fetchPosts.fulfilled, (state,action) => {
-      state.status = 'succeded';     
-      state.entities = action.payload
-      state.filteredEntities = state.entities
-
-    })
-    .addCase(fetchPosts.rejected, (state, action) => {
-      state.status = 'failed';
-      state.error = action.error.message;
-    })
-  }  
+      .addMatcher(
+        apiSlice.endpoints.getPosts.matchFulfilled,
+        (state, { payload }) => {
+          state.entities = payload;
+          state.filteredEntities = state.entities;
+        }
+      )
+  }
 })
 
-export const selectAllPosts = (state) => state.post.entities;
 
 export const { addPost, removePost, filterPosts } = postSlice.actions;
 export default postSlice.reducer;
